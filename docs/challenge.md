@@ -41,3 +41,34 @@ In production environments, latency directly impacts user experience and system 
 Models with similar ROC AUC scores may not be equally viable if their inference times differ significantly.
 
 Model size was also considered, as it affects cold start times, deployment speed, and infrastructure costs
+
+---
+## 1.4) Model Selection
+
+The objective of this project is to predict the probability of flight delays for airport takeoffs and landings.
+In this context, correctly identifying delayed flights (class 1) is more critical than maximizing overall accuracy, as false negatives may lead to operational and planning issues.
+
+For this reason, recall for the delayed class and probabilistic discrimination (ROC AUC) were prioritized over accuracy.
+Models achieving high accuracy but near-zero recall for delayed flights were discarded, as they fail to meet the business objective despite appearing performant.
+
+Among the evaluated models, only those trained with class balancing and the top 10 most important features achieved a meaningful recall for delayed flights.
+
+While both XGBoost and Logistic Regression achieved similar ROC AUC and recall scores, Logistic Regression was selected due to its significantly lower inference latency, smaller model size, and simpler operational footprint.
+
+These characteristics make it more suitable for production deployment as an API, without sacrificing predictive performance.
+
+| Metric                   | XGBoost (Top 10 + Balanced) | Logistic Regression (Top 10 + Balanced) |
+| ------------------------ | --------------------------- | --------------------------------------- |
+| Recall (Delay = 1)       | **0.69**                    | **0.69**                                |
+| Precision (Delay = 1)    | 0.25                        | 0.25                                    |
+| ROC AUC (Test)           | 0.643                       | 0.640                                   |
+| Accuracy                 | 0.55                        | 0.55                                    |
+| Inference Latency (mean) | 2.33 ms                     | **0.91 ms**                             |
+| Model Size               | 0.24 MB                     | **0.0013 MB**                           |
+| Interpretability         | Low                         | **High**                                |
+| Operational Complexity   | Medium                      | **Low**                                 |
+| Production Suitability   | Good                        | **Excellent**                           |
+
+**Note:** When predictive performance is comparable, the simpler and more efficient model was preferred to reduce operational risk and infrastructure costs.
+
+**Model selected: Logistic Regression with top 10 features and class balancing (Regression 2)**
