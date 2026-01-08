@@ -34,7 +34,8 @@ class TestModel(unittest.TestCase):
         base_dir = Path(__file__).resolve().parent.parent.parent
         data_path = base_dir / "data" / "data.csv"
 
-        self.data = pd.read_csv(data_path)
+        # To avoid implicit type inference from Pandas and keep preprocessing deterministic.
+        self.data = pd.read_csv(data_path, dtype=str)
         
 
     def test_model_preprocess_for_training(

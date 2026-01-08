@@ -72,3 +72,8 @@ These characteristics make it more suitable for production deployment as an API,
 **Note:** When predictive performance is comparable, the simpler and more efficient model was preferred to reduce operational risk and infrastructure costs.
 
 **Model selected: Logistic Regression with top 10 features and class balancing (Regression 2)**
+
+---
+## 1.5) Test Data Loading Strategy (test_model.py)
+
+The dataset path is resolved dynamically based on the test file location to ensure portability across different execution environments. Additionally, all columns are loaded as strings (dtype=str) to avoid Pandas type inference issues and mixed-type warnings, keeping data loading deterministic and delegating all type handling to the preprocessing stage.
