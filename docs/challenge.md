@@ -77,3 +77,34 @@ These characteristics make it more suitable for production deployment as an API,
 ## 1.5) Test Data Loading Strategy (test_model.py)
 
 The dataset path is resolved dynamically based on the test file location to ensure portability across different execution environments. Additionally, all columns are loaded as strings (dtype=str) to avoid Pandas type inference issues and mixed-type warnings, keeping data loading deterministic and delegating all type handling to the preprocessing stage.
+
+## 1.6) Model tests 
+
+The `DelayModel` implementation has been validated using automated unit tests.
+
+Run the model tests with:
+```
+make model-test
+```
+
+Results:
+```
+collected 4 items
+
+tests/model/test_model.py ....                                                                                                             [100%]
+
+--------------- generated xml file: /mnt/c/Users/Carlos/Documents/Option - Latam/airport-flight-delay-prediction/reports/junit.xml ---------------
+
+---------- coverage: platform linux, python 3.10.12-final-0 ----------
+Name                    Stmts   Miss  Cover
+-------------------------------------------
+challenge/__init__.py       2      0   100%
+challenge/api.py            8      2    75%
+challenge/model.py         58      3    95%
+-------------------------------------------
+TOTAL                      68      5    93%
+Coverage HTML written to dir reports/html
+Coverage XML written to file reports/coverage.xml
+```
+
+Test and coverage artifacts are generated under the reports/ directory (excluded from version control).
