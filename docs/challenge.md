@@ -2,7 +2,7 @@
 
 # Part 1: Model Implementation
 
-## Fix Features Generation
+## 1.1) Fix Features Generation
 
 ### 1) get_period_day
 
@@ -24,3 +24,10 @@ While functionally correct, the original implementation relies on fragile string
 **What was improved**
 
 Refactored the internal logic to use explicit datetime ranges, improving clarity, robustness, and testability without changing the original behavior or outputs.
+
+---
+## 1.2) Why ROC Curve is applied
+
+ROC AUC is used to evaluate the model's discriminative power independently of any specific decision threshold.
+By comparing ROC AUC between training and test sets, we can detect overfitting or underfitting and assess whether the model generalizes well.
+This comparison helps select the most suitable model for production deployment.
