@@ -31,3 +31,13 @@ Refactored the internal logic to use explicit datetime ranges, improving clarity
 ROC AUC is used to evaluate the model's discriminative power independently of any specific decision threshold.
 By comparing ROC AUC between training and test sets, we can detect overfitting or underfitting and assess whether the model generalizes well.
 This comparison helps select the most suitable model for production deployment.
+
+---
+## 1.3) Production Readiness Evaluation
+In addition to predictive performance, inference latency and model size were evaluated.
+These metrics are relevant for production readiness, especially when deploying the model as an API.
+
+In production environments, latency directly impacts user experience and system scalability.
+Models with similar ROC AUC scores may not be equally viable if their inference times differ significantly.
+
+Model size was also considered, as it affects cold start times, deployment speed, and infrastructure costs
