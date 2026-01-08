@@ -1,4 +1,5 @@
 import unittest
+from pathlib import Path
 import pandas as pd
 
 from sklearn.metrics import classification_report
@@ -28,7 +29,13 @@ class TestModel(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.model = DelayModel()
-        self.data = pd.read_csv(filepath_or_buffer="../data/data.csv")
+
+        # Data path robust to pytest execution context
+        base_dir = Path(__file__).resolve().parent.parent.parent
+        data_path = base_dir / "data" / "data.csv"
+
+        # To avoid implicit type inference from Pandas and keep preprocessing deterministic.
+        self.data = pd.read_csv(data_path, dtype=str)
         
 
     def test_model_preprocess_for_training(
