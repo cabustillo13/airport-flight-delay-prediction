@@ -146,3 +146,12 @@ TOTAL                     147     28    81%
 Coverage HTML written to dir reports/html
 Coverage XML written to file reports/coverage.xml
 ```
+---
+
+# Part 3: Cloud Deployment
+
+## 3.1) Python Version Selection
+
+It's crucial to explicitly define the Python version in the Dockerfile to ensure deterministic builds every time the Docker image is created, rather than relying on `python:latest`.
+
+I chose Python 3.10 because it's a recent and stable version well-suited for cloud deployments, and it matches my local development environment for consistency across environments.

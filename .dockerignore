@@ -1,0 +1,60 @@
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv
+venv/
+ENV/
+env/
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov/
+.tox/
+reports/
+
+# Development
+.git
+.gitignore
+.github
+workflows/
+docs/
+tests/
+*.ipynb
+exploration.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Development dependencies
+requirements-dev.txt
+requirements-test.txt
+Makefile
+
+# Documentation
+README.md
+LICENCE
+LICENSE
+*.md
+
+# CI/CD
+.coveragerc
+.github/
+.gitlab-ci.yml
+Jenkinsfile
+
+# Misc
+.DS_Store
+*.log
