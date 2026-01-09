@@ -34,9 +34,11 @@ USER appuser
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
+    # Cloud Run injects PORT variable, default to 8080
     PORT=8080 \
     HOST=0.0.0.0 \
-    WORKERS=1
+    # Use multiple workers for better concurrency
+    WORKERS=2
 
 # Expose port
 EXPOSE 8080

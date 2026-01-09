@@ -155,3 +155,190 @@ Coverage XML written to file reports/coverage.xml
 It's crucial to explicitly define the Python version in the Dockerfile to ensure deterministic builds every time the Docker image is created, rather than relying on `python:latest`.
 
 I chose Python 3.10 because it's a recent and stable version well-suited for cloud deployments, and it matches my local development environment for consistency across environments.
+
+---
+
+## 3.2) Deployment to Google Cloud Platform (Cloud Run)
+
+This API was deployed to **Google Cloud Platform (GCP)** using **Cloud Run**, following a container-based, serverless approach focused on scalability, cost control, and reproducibility.
+
+The deployment was designed to support **load and stress testing** while keeping infrastructure simple and cost-efficient.
+
+### Architecture Decisions
+
+* **Cloud Run (managed)** was chosen instead of VMs or Kubernetes:
+
+  * Automatic horizontal scaling
+  * Pay-per-use billing model
+  * Zero idle cost (`min-instances = 0`)
+  * Native support for containerized FastAPI applications
+
+* **Docker-first approach**:
+
+  * Ensures environment reproducibility
+  * Same image is used locally and in the cloud
+  * Eliminates "works on my machine" issues
+
+* **Stateless API design**:
+
+  * Model inference is lightweight
+  * No persistent storage required
+  * Ideal for serverless deployment
+
+---
+
+### Initial GCP Setup
+
+```bash
+# 1. Install gcloud CLI
+# https://cloud.google.com/sdk/docs/install
+
+# 2. Authenticate
+gcloud auth login
+
+# 3. Create project
+gcloud projects create flight-delay-api-483816 --name="flight-delay-api"
+
+# 4. Set active project
+gcloud config set project flight-delay-api-483816
+
+# 5. Enable required APIs
+gcloud services enable run.googleapis.com
+gcloud services enable cloudbuild.googleapis.com
+```
+
+Note: Billing was enabled manually via the GCP Console, which is required for Cloud Run deployments.
+
+---
+
+### Docker-based Deployment
+
+The API is built and deployed using **Google Cloud Build**, which automatically builds and pushes the Docker image.
+
+#### Deployment Script (`deploy-gcp.sh`)
+
+Key configuration decisions:
+
+* **Memory**: 2Gi (to safely support pandas + sklearn)
+* **CPU**: 1
+* **Concurrency**: 80 (optimized for FastAPI async handling)
+* **Max instances**: 10 (to cap scaling and cost)
+* **Timeout**: 60s
+* **Unauthenticated access** (required for stress testing)
+
+Deployment command:
+
+```bash
+./deploy-gcp.sh
+```
+
+Or via Makefile:
+
+```bash
+make deploy-gcp
+```
+
+After deployment, the script outputs the **public Cloud Run URL**.
+
+```
+STRESS_URL = https://flight-delay-prediction-pg6oadgp5a-uc.a.run.app/
+```
+---
+
+#### Local vs Cloud Testing (Makefile Support)
+
+The Makefile was extended to support **both local Docker testing and GCP deployment**, enabling fast iteration and parity between environments.
+
+#### Local Docker Testing
+
+```bash
+make docker-build
+make docker-run
+```
+
+Endpoints:
+
+* API: [http://localhost:8080](http://localhost:8080)
+* Health check: [http://localhost:8080/health](http://localhost:8080/health)
+* Docs: [http://localhost:8080/docs](http://localhost:8080/docs)
+
+#### GCP Operations
+
+```bash
+make deploy-gcp
+make gcp-logs
+make gcp-delete
+```
+
+---
+
+### Stress Testing
+
+Stress tests are executed using **Locust**, as required by the challenge.
+
+#### Stress Test Configuration
+
+* **Users**: 100
+* **Spawn rate**: 1 user/sec
+* **Duration**: 60 seconds
+* **Endpoint tested**: `/predict`
+
+The target URL is configurable in the Makefile:
+
+```makefile
+STRESS_URL = https://flight-delay-prediction-pg6oadgp5a-uc.a.run.app/
+```
+
+#### Test Command
+
+```bash
+make stress-test
+```
+
+---
+
+#### Stress Test Results (Summary)
+
+- **0% request failures**
+- **~4,200 total requests**
+- **~75–90 requests/sec sustained**
+- **Median latency ~320 ms**
+- **99th percentile < 1 second (most cases)**
+
+This confirms:
+
+* The API scales correctly under load
+* Cloud Run handles concurrency efficiently
+* Model inference latency is acceptable for real-time usage
+
+---
+
+### Cost Control & Billing Safety
+
+To avoid unexpected charges during stress testing and experimentation, the following safeguards were implemented:
+
+* **Billing Budgets and Alerts**:
+
+  * Alerts configured at multiple thresholds (e.g. 50%, 75%, 90%, 100%)
+  * Email notifications enabled
+
+* **Autoscaling limits**:
+
+  * `max-instances` explicitly capped
+  * Prevents runaway scaling
+
+* **Serverless-first design**:
+
+  * No idle costs
+  * Infrastructure exists only while requests are being processed
+
+This ensures the project remains **safe, predictable, and cost-efficient**.
+
+---
+
+### Final Outcome
+
+* API successfully deployed on GCP
+* Stress tests passed as required by the challenge
+* Infrastructure designed with production best practices
+* Cost risks mitigated with budgets and scaling limits
