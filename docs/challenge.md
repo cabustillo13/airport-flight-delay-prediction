@@ -342,3 +342,40 @@ This ensures the project remains **safe, predictable, and cost-efficient**.
 * Stress tests passed as required by the challenge
 * Infrastructure designed with production best practices
 * Cost risks mitigated with budgets and scaling limits
+
+---
+
+## Part 4: CI / CD
+
+A **CI/CD pipeline** was implemented using **GitHub Actions**.
+
+### Continuous Integration (CI)
+
+The CI workflow runs on pull requests and pushes to `main` and ensures code correctness before deployment by:
+
+* Setting up Python 3.10
+* Installing dependencies
+* Running **model unit tests**
+* Running **API tests**
+
+This guarantees stability of both the ML pipeline and the FastAPI service.
+
+---
+
+### Continuous Delivery (CD)
+
+The CD workflow is triggered on pushes to `main` and automatically deploys the application to **Google Cloud Run** by:
+
+* Authenticating securely with GCP
+* Building the Docker image
+* Deploying the service with controlled resources and autoscaling
+
+Only validated code reaches production.
+
+---
+
+### Stress tests
+
+Stress tests are **intentionally excluded from CI**.
+
+They are executed manually against Docker or Cloud Run environments, since load tests are non-deterministic, infrastructure-dependent, and costly to run on every pipeline execution. This keeps CI fast, reliable, and reproducible.
