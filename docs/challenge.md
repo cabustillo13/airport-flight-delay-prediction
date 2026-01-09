@@ -78,6 +78,7 @@ These characteristics make it more suitable for production deployment as an API,
 
 The dataset path is resolved dynamically based on the test file location to ensure portability across different execution environments. Additionally, all columns are loaded as strings (dtype=str) to avoid Pandas type inference issues and mixed-type warnings, keeping data loading deterministic and delegating all type handling to the preprocessing stage.
 
+---
 ## 1.6) Model tests 
 
 The `DelayModel` implementation has been validated using automated unit tests.
@@ -99,12 +100,49 @@ tests/model/test_model.py ....                                                  
 Name                    Stmts   Miss  Cover
 -------------------------------------------
 challenge/__init__.py       2      0   100%
-challenge/api.py            8      2    75%
-challenge/model.py         58      3    95%
+challenge/api.py           80     40    50%
+challenge/model.py         65      6    91%
 -------------------------------------------
-TOTAL                      68      5    93%
+TOTAL                     147     46    69%
 Coverage HTML written to dir reports/html
 Coverage XML written to file reports/coverage.xml
 ```
 
 Test and coverage artifacts are generated under the reports/ directory (excluded from version control).
+
+---
+
+# Part 2: FastAPI API
+
+## 2.1) Dependency compatibility
+
+FastAPI 0.86 / Starlette 0.20 require AnyIO < 4.
+
+The dependency is pinned explicitly to avoid runtime errors in TestClient.
+
+## 2.2) API tests
+
+Run the api tests with:
+```
+make api-test
+```
+
+Results:
+```
+collected 4 items
+
+tests/api/test_api.py ....                                                                                                                 [100%]
+
+--------------- generated xml file: /mnt/c/Users/Carlos/Documents/Option - Latam/airport-flight-delay-prediction/reports/junit.xml ---------------
+
+---------- coverage: platform linux, python 3.10.12-final-0 ----------
+Name                    Stmts   Miss  Cover
+-------------------------------------------
+challenge/__init__.py       2      0   100%
+challenge/api.py           80     14    82%
+challenge/model.py         65     14    78%
+-------------------------------------------
+TOTAL                     147     28    81%
+Coverage HTML written to dir reports/html
+Coverage XML written to file reports/coverage.xml
+```
