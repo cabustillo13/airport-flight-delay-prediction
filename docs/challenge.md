@@ -1,4 +1,8 @@
-# Notes
+<p align="center">
+ <img width="100px" src="src/plane_logo.svg" align="center" alt="Plane Logo" />
+ <h1 align="center">Carlos Bustillo</h1>
+ <p align="center">This repository contains my solution to a technical challenge, along with the engineering notes and decisions taken throughout the process to keep the work well documented and reproducible.</p>
+</p>
 
 # Part 1: Model Implementation
 
@@ -89,24 +93,8 @@ make model-test
 ```
 
 Results:
-```
-collected 4 items
 
-tests/model/test_model.py ....                                                                                                             [100%]
-
---------------- generated xml file: /mnt/c/Users/Carlos/Documents/Option - Latam/airport-flight-delay-prediction/reports/junit.xml ---------------
-
----------- coverage: platform linux, python 3.10.12-final-0 ----------
-Name                    Stmts   Miss  Cover
--------------------------------------------
-challenge/__init__.py       2      0   100%
-challenge/api.py           80     40    50%
-challenge/model.py         65      6    91%
--------------------------------------------
-TOTAL                     147     46    69%
-Coverage HTML written to dir reports/html
-Coverage XML written to file reports/coverage.xml
-```
+![Model test results](src/model_test_results.PNG)
 
 Test and coverage artifacts are generated under the reports/ directory (excluded from version control).
 
@@ -128,24 +116,9 @@ make api-test
 ```
 
 Results:
-```
-collected 4 items
 
-tests/api/test_api.py ....                                                                                                                 [100%]
+![API test results](src/api_test_results.PNG)
 
---------------- generated xml file: /mnt/c/Users/Carlos/Documents/Option - Latam/airport-flight-delay-prediction/reports/junit.xml ---------------
-
----------- coverage: platform linux, python 3.10.12-final-0 ----------
-Name                    Stmts   Miss  Cover
--------------------------------------------
-challenge/__init__.py       2      0   100%
-challenge/api.py           80     14    82%
-challenge/model.py         65     14    78%
--------------------------------------------
-TOTAL                     147     28    81%
-Coverage HTML written to dir reports/html
-Coverage XML written to file reports/coverage.xml
-```
 ---
 
 # Part 3: Cloud Deployment
@@ -243,6 +216,9 @@ After deployment, the script outputs the **public Cloud Run URL**.
 ```
 STRESS_URL = https://flight-delay-prediction-pg6oadgp5a-uc.a.run.app/
 ```
+
+![GCP Cloud Deployment](src/cloud_deployment_gcp.PNG)
+
 ---
 
 #### Local vs Cloud Testing (Makefile Support)
@@ -300,10 +276,13 @@ make stress-test
 #### Stress Test Results (Summary)
 
 - **0% request failures**
-- **~4,200 total requests**
+- ~4,200 total requests
 - **~75–90 requests/sec sustained**
 - **Median latency ~320 ms**
 - **99th percentile < 1 second (most cases)**
+- Occasional high-latency outliers due to Cloud Run cold starts
+
+![Stress test results](src/stress_test_results.jpeg)
 
 This confirms:
 
@@ -379,3 +358,17 @@ Only validated code reaches production.
 Stress tests are **intentionally excluded from CI**.
 
 They are executed manually against Docker or Cloud Run environments, since load tests are non-deterministic, infrastructure-dependent, and costly to run on every pipeline execution. This keeps CI fast, reliable, and reproducible.
+
+![Github Actions Implementation](src/github_actions_screenshot.PNG)
+
+**Note:** I used **Gitflow** and **Conventional Commits**, keeping develop as the integration branch and main as the final deliverable.
+All features were merged into develop, and I opened a single PR to main once the solution was complete and all tests passed.
+
+--- 
+
+## Part 5: Future Improvements
+
+- Add data drift monitoring once production data is available (e.g., monitoring distribution shifts in OPERA, MES, and TIPOVUELO).
+- Reduce Cloud Run cold starts by configuring minimum instances and optimizing container startup time.
+- Introduce request batching or lightweight caching for frequent prediction patterns to improve tail latency.
+
