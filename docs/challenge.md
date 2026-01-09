@@ -78,6 +78,7 @@ These characteristics make it more suitable for production deployment as an API,
 
 The dataset path is resolved dynamically based on the test file location to ensure portability across different execution environments. Additionally, all columns are loaded as strings (dtype=str) to avoid Pandas type inference issues and mixed-type warnings, keeping data loading deterministic and delegating all type handling to the preprocessing stage.
 
+---
 ## 1.6) Model tests 
 
 The `DelayModel` implementation has been validated using automated unit tests.
@@ -108,3 +109,13 @@ Coverage XML written to file reports/coverage.xml
 ```
 
 Test and coverage artifacts are generated under the reports/ directory (excluded from version control).
+
+---
+
+# Part 2: FastAPI API
+
+## 2.1) Dependency compatibility
+
+FastAPI 0.86 / Starlette 0.20 require AnyIO < 4.
+
+The dependency is pinned explicitly to avoid runtime errors in TestClient.
